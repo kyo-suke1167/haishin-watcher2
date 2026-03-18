@@ -48,3 +48,6 @@ next-env.d.ts
 *.db
 *.db-journal
 ccv_*.csv
+tmp_analyzer/
+archives/
+dev.db
