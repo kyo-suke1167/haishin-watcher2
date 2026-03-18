@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
+
+# .gitignore の一番下に追記（絶対防衛線！）
+.env
+.env.local
+*.db
+*.db-journal
+ccv_*.csv

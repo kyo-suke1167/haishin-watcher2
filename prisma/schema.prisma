@@ -1,0 +1,30 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// 🎯 監視対象の配信（Video IDなどを保存）
+model StreamTarget {
+  id        String   @id @default(cuid())
+  videoId   String   @unique
+  title     String?  // 後から取得したタイトルを入れる
+  status    String   @default("waiting") // waiting(待機中), live(配信中), completed(終了)
+  report    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 🤖 自動検知用のチャンネル（UC...などを保存）
+model ChannelTarget {
+  id        String   @id @default(cuid())
+  channelId String   @unique
+  name      String?  // チャンネル名
+  thumbnail String?  // 🌟 アイコン画像URL用の箱を追加！
+  createdAt DateTime @default(now())
+}
