@@ -3,10 +3,11 @@ import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import StreamDashboard from "@/components/StreamDashboard";
 import ChannelDashboard from "@/components/ChannelDashboard";
+import AnalyzerDashboard from "@/components/AnalyzerDashboard"; // 🌟 追加！
+import ArchiveDashboard from "@/components/ArchiveDashboard";
 
 export default function Home() {
-  // 💡 どの画面を表示するかを管理するState（初期値はスナイパーモード）
-  const [activeView, setActiveView] = useState<'stream' | 'channel'>('stream');
+  const [activeView, setActiveView] = useState<'stream' | 'channel' | 'analyze' | 'archive'>('stream');
 
   return (
     <div className="flex min-h-screen bg-gray-950 text-gray-100 font-sans">
@@ -15,12 +16,13 @@ export default function Home() {
       <Sidebar activeView={activeView} setActiveView={setActiveView} />
 
       {/* 📺 右側のメインコンテンツエリア */}
-      {/* md:ml-64 でPC画面の時はサイドバーの幅(64=16rem=256px)だけ左に余白を空ける */}
       <main className="flex-1 p-4 pt-16 md:pt-8 md:p-8 md:ml-64 transition-all duration-300">
         
-        {/* Stateの中身に合わせて、表示するコンポーネントを切り替える魔法！ */}
+        {/* Stateの中身に合わせて、表示するコンポーネントを切り替える！ */}
         {activeView === 'stream' && <StreamDashboard />}
         {activeView === 'channel' && <ChannelDashboard />}
+        {activeView === 'analyze' && <AnalyzerDashboard />} {/* 🌟 追加！ */}
+        {activeView === 'archive' && <ArchiveDashboard />} {/* 🌟 追加！ */}
         
       </main>
 

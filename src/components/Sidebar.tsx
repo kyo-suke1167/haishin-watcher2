@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 type SidebarProps = {
-  activeView: 'stream' | 'channel';
-  setActiveView: (view: 'stream' | 'channel') => void;
+  activeView: 'stream' | 'channel' | 'analyze' | 'archive'; // 🌟 追加
+  setActiveView: (view: 'stream' | 'channel' | 'analyze' | 'archive') => void;
 };
 
 export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
@@ -10,7 +10,9 @@ export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
 
   const menuItems = [
     { id: 'stream', label: '🎯 単発監視 (スナイパー)', icon: '🌟' },
-    { id: 'channel', label: '📡 自動監視 (レーダー)', icon: '🌟' },
+    { id: 'channel', label: '📡 自動監視 (レーダー)', icon: '🤖' },
+    { id: 'analyze', label: '🧠 AI分析 (アナライザー)', icon: '🧠' }, 
+    { id: 'archive', label: '🗄️ アーカイブ一覧', icon: '🗂️' }, // 🌟 追加！
   ] as const;
 
   return (
