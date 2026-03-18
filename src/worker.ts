@@ -1,4 +1,3 @@
-// src/worker.ts
 import "dotenv/config";
 import { prisma } from "@/lib/prisma";
 import axios from "axios";
@@ -94,10 +93,21 @@ async function watchStreams() {
 
         // 🌟 時間のズレを修正！完璧な日本時間（JST）で記録！
         const nowJST = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
-        const logFile = path.join(process.cwd(), `ccv_${target.videoId}.csv`);
+        
+        // 🌟 ファイル名を「ccv_動画ID_タイトル.csv」にする安全設計
+        const safeTitle = (target.title || "無題の配信").replace(/[\\/:*?"<>|]/g, '_');
+        const newLogFileName = `ccv_${target.videoId}_${safeTitle}.csv`;
+        const newLogFile = path.join(process.cwd(), newLogFileName);
+
+        // 💡 古い名前（IDのみ）のファイルが残っていたら、新しい名前に自動でリネーム！
+        const oldLogFile = path.join(process.cwd(), `ccv_${target.videoId}.csv`);
+        if (fs.existsSync(oldLogFile)) {
+          fs.renameSync(oldLogFile, newLogFile);
+          console.log(`  🔄 ログファイルをリネームしました: ${newLogFileName}`);
+        }
         
         // 🌟 フォーマット変更：「時間, 同接数, 高評価数」で記録！
-        fs.appendFileSync(logFile, `${nowJST},${metrics.ccv},${metrics.likes}\n`);
+        fs.appendFileSync(newLogFile, `${nowJST},${metrics.ccv},${metrics.likes}\n`);
 
         failCounts[target.videoId] = 0;
       } else {
@@ -114,7 +124,7 @@ async function watchStreams() {
 
             delete failCounts[target.videoId]; 
 
-            // 🌟 分析機能を消した代わりに、Discordへシンプルな記録完了通知を飛ばす！
+            // Discordへシンプルな記録完了通知を飛ばす！
             const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
             if (webhookUrl) {
               axios.post(webhookUrl, {

@@ -23,10 +23,14 @@ export async function GET(
     }
 
     // 2. CSVファイルから同接履歴を読み込んで、グラフ用（Recharts）のJSON配列に変換する！
-    const ccvFile = path.join(process.cwd(), `ccv_${target.videoId}.csv`);
+    // 🌟 タイトル付きのファイル名も許容するように、前方一致で探す！
+    const files = fs.readdirSync(process.cwd());
+    const targetFileName = files.find(f => f.startsWith(`ccv_${target.videoId}`) && f.endsWith('.csv'));
+    
     let chartData: any[] = [];
     
-    if (fs.existsSync(ccvFile)) {
+    if (targetFileName) {
+      const ccvFile = path.join(process.cwd(), targetFileName);
       const csvText = fs.readFileSync(ccvFile, 'utf-8');
       const lines = csvText.trim().split('\n');
       
@@ -36,7 +40,9 @@ export async function GET(
         if (!timeJST || !ccvStr || !likesStr) return null;
 
         // 💡 時間の変換（JSTの文字列 "2026/3/18 10:00:00" から "HH:MM" を抽出）
-        const timeLabel = timeJST.split(' ')[1].substring(0, 5); // "10:00" の部分を切り出す
+        const timeParts = timeJST.split(' ');
+        if (timeParts.length < 2) return null;
+        const timeLabel = timeParts[1].substring(0, 5); // "10:00" の部分を切り出す
 
         return {
           time: timeLabel,
